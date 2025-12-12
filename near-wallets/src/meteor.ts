@@ -143,13 +143,9 @@ const createMeteorWallet = async () => {
 
       const account = state.wallet.account()!;
       return await tryApprove({
+        execute: async () => account["signAndSendTransaction_direct"]({ actions, receiverId: receiverId }),
         title: "Sign transaction",
         button: "Open wallet",
-        execute: async () =>
-          account["signAndSendTransaction_direct"]({
-            actions: connectorActionsToNearActions(actions),
-            receiverId: receiverId,
-          }),
       });
     },
 
@@ -158,15 +154,9 @@ const createMeteorWallet = async () => {
       if (!state.wallet.isSignedIn()) throw new Error("Wallet not signed in");
 
       return await tryApprove({
+        execute: async () => state.wallet.requestSignTransactions({ transactions: transactions }),
         title: "Sign transactions",
         button: "Open wallet",
-        execute: async () =>
-          state.wallet.requestSignTransactions({
-            transactions: transactions.map((transaction) => ({
-              actions: connectorActionsToNearActions(transaction.actions),
-              receiverId: transaction.receiverId,
-            })),
-          }),
       });
     },
   };
