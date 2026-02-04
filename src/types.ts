@@ -92,9 +92,10 @@ export interface WalletFeatures {
   testnet: boolean;
 }
 
-type Hash = Uint8Array;
-
-export type SignDelegateActionResult = [Hash, SignedDelegate];
+export type SignDelegateActionResult = {
+  delegateHash: Uint8Array;
+  signedDelegate: SignedDelegate;
+};
 
 export interface NearWalletBase {
   manifest: WalletManifest;

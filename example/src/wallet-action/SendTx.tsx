@@ -45,7 +45,7 @@ export const SendTx = ({ wallet, network }: IPropsWalletAction) => {
       const publicKey = accounts[0]?.publicKey;
       if (!publicKey) throw new Error("No public key available to sign delegate action");
 
-      const result = await wallet.signDelegateAction({ 
+      const {signedDelegate} = await wallet.signDelegateAction({ 
         delegateAction: {
           actions: actions.map((a) => buildConnectorAction(a)),
           receiverId: receiverId,
@@ -53,9 +53,9 @@ export const SendTx = ({ wallet, network }: IPropsWalletAction) => {
       });
       alert(
         "Successfully signed delegate action. SignedDelegate:\n" +
-          result[1]
+          signedDelegate
       );
-      console.log("signedDelegate", result[1]);
+      console.log("signedDelegate", signedDelegate);
     } catch (e) {
       setLastError(e instanceof Error ? e.message : String(e));
       throw e;
