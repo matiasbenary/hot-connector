@@ -4,11 +4,11 @@ import {
   Network,
   SignAndSendTransactionParams,
   SignAndSendTransactionsParams,
-  SignDelegateActionParams,
-  SignDelegateActionResult,
+  SignDelegateActionsParams,
   SignedMessage,
   SignMessageParams,
   WalletManifest,
+  SignDelegateActionsResponse,
 } from "../types";
 import { NearConnector } from "../NearConnector";
 import { nearActionsToConnectorActions } from "../actions";
@@ -61,16 +61,16 @@ export class SandboxWallet {
     return this.executor.call("wallet:signMessage", args);
   }
 
-  async signDelegateAction(params: SignDelegateActionParams): Promise<SignDelegateActionResult> {
+  async signDelegateActions(params: SignDelegateActionsParams): Promise<SignDelegateActionsResponse> {
     const args = {
       ...params,
-      delegateAction: {
-        ...params.delegateAction,
-        actions: nearActionsToConnectorActions(params.delegateAction.actions),
-      },
+      delegateActions: params.delegateActions.map((delegateAction) => ({
+        ...delegateAction,
+        actions: nearActionsToConnectorActions(delegateAction.actions),
+      })),
       network: params.network || this.connector.network,
     };
-    return this.executor.call("wallet:signDelegateAction", args);
+    return this.executor.call("wallet:signDelegateActions", args);
   }
 }
 

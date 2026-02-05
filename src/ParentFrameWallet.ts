@@ -10,8 +10,8 @@ import {
   SignedMessage,
   SignMessageParams,
   WalletManifest,
-  SignDelegateActionParams,
-  SignDelegateActionResult,
+  SignDelegateActionsParams,
+  SignDelegateActionsResponse,
 } from "./types";
 
 export class ParentFrameWallet {
@@ -76,16 +76,16 @@ export class ParentFrameWallet {
     return this.callParentFrame("near:signMessage", args) as Promise<SignedMessage>;
   }
 
-  async signDelegateAction(params: SignDelegateActionParams): Promise<SignDelegateActionResult> {
+  async signDelegateActions(params: SignDelegateActionsParams): Promise<SignDelegateActionsResponse> {
     const args = {
       ...params,
-      delegateAction: {
-        ...params.delegateAction,
-        actions: nearActionsToConnectorActions(params.delegateAction.actions),
-      },
+      delegateActions: params.delegateActions.map((delegateAction) => ({
+        ...delegateAction,
+        actions: nearActionsToConnectorActions(delegateAction.actions),
+      })),
       network: params.network || this.connector.network,
     };
     
-    return this.callParentFrame("near:signDelegateAction", args) as Promise<SignDelegateActionResult>;
+    return this.callParentFrame("near:signDelegateActions", args) as Promise<SignDelegateActionsResponse>;
   }
 }

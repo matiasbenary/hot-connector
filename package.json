@@ -20,7 +20,8 @@
   "scripts": {
     "build:wallets": "cd near-wallets && yarn build:wallets",
     "build": "rm -rf build && yarn tsc",
-    "cdn": "vite build"
+    "cdn": "vite build",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@near-js/transactions": "^2.5.1",

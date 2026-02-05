@@ -57,13 +57,13 @@ export interface SignAndSendTransactionsParams {
   transactions: Array<{ receiverId: string; actions: Array<Action | ConnectorAction> }>;
 }
 
-export interface SignDelegateActionParams {
+export interface SignDelegateActionsParams {
   network?: Network;
   signerId?: string;
-  delegateAction: {
+  delegateActions: Array<{
     actions: Array<Action | ConnectorAction>;
     receiverId: string
-  }
+  }>;
 }
 
 export interface WalletManifest {
@@ -97,6 +97,10 @@ export type SignDelegateActionResult = {
   signedDelegate: SignedDelegate;
 };
 
+export interface SignDelegateActionsResponse {
+  signedDelegateActions: SignDelegateActionResult[]
+}
+
 export interface NearWalletBase {
   manifest: WalletManifest;
 
@@ -127,7 +131,7 @@ export interface NearWalletBase {
 
   signMessage(params: SignMessageParams): Promise<SignedMessage>;
 
-  signDelegateAction(params: SignDelegateActionParams): Promise<SignDelegateActionResult>
+  signDelegateActions(params: SignDelegateActionsParams): Promise<SignDelegateActionsResponse>;
 }
 
 export interface EventMap {
