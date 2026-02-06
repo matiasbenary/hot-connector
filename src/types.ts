@@ -1,5 +1,5 @@
 import type { FinalExecutionOutcome } from "@near-js/types";
-import type { Action } from "@near-js/transactions";
+import type { Action, SignedDelegate } from "@near-js/transactions";
 import type { ConnectorAction } from "./actions/types";
 
 export type { FinalExecutionOutcome, Action };
@@ -57,6 +57,15 @@ export interface SignAndSendTransactionsParams {
   transactions: Array<{ receiverId: string; actions: Array<Action | ConnectorAction> }>;
 }
 
+export interface SignDelegateActionsParams {
+  network?: Network;
+  signerId?: string;
+  delegateActions: Array<{
+    actions: Array<Action | ConnectorAction>;
+    receiverId: string
+  }>;
+}
+
 export interface WalletManifest {
   id: string;
   platform: string[];
@@ -78,8 +87,18 @@ export interface WalletFeatures {
   signAndSendTransaction: boolean;
   signAndSendTransactions: boolean;
   signInWithoutAddKey: boolean;
+  signDelegateAction: boolean;
   mainnet: boolean;
   testnet: boolean;
+}
+
+export type SignDelegateActionResult = {
+  delegateHash: Uint8Array;
+  signedDelegate: SignedDelegate;
+};
+
+export interface SignDelegateActionsResponse {
+  signedDelegateActions: SignDelegateActionResult[]
 }
 
 export interface NearWalletBase {
@@ -111,6 +130,8 @@ export interface NearWalletBase {
   signAndSendTransactions(params: SignAndSendTransactionsParams): Promise<Array<FinalExecutionOutcome>>;
 
   signMessage(params: SignMessageParams): Promise<SignedMessage>;
+
+  signDelegateActions(params: SignDelegateActionsParams): Promise<SignDelegateActionsResponse>;
 }
 
 export interface EventMap {

@@ -7,7 +7,8 @@
     "start": "cd ../near-wallets && EXAMPLE=true yarn build:wallets && cd ../example && yarn copy-manifest && vite",
     "copy-manifest": "node scripts/copy-manifest.js",
     "build": "cd ../near-wallets && EXAMPLE=true yarn build:wallets && cd ../example && yarn copy-manifest && vite build && echo '*' > dist/CORS",
-    "deploy": "surge ./dist"
+    "deploy": "surge ./dist",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@hot-labs/near-connect": "^0.8.1",
