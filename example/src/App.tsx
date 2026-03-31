@@ -1,9 +1,36 @@
 import { FC, useMemo, useState } from "react";
-import { NearConnector, NearWalletBase } from "@hot-labs/near-connect";
+import { NearConnector, NearWalletBase, WalletPlugin } from "@hot-labs/near-connect";
 import SignClient from "@walletconnect/sign-client";
 
 import { NetworkSelector } from "./form-component/NetworkSelector.tsx";
 import { WalletActions } from "./WalletActions.tsx";
+
+
+const loginWithSignature: WalletPlugin = {
+  async signIn(this: NearWalletBase, params, next) {
+    const signedMessage = await this.signMessage({
+      message: "Test",
+      recipient: "test.near",
+      nonce: new Uint8Array(Buffer.from('KNV0cOpvJ50D5vfF9pqWom8wo2sliQ4W+Wa7uZ3Uk6Y=', 'base64')),
+    })
+
+    console.log("Signed message", signedMessage)
+    localStorage.setItem("plugin:signedMessage", JSON.stringify(signedMessage))
+
+    return [{ accountId: signedMessage.accountId, publicKey: signedMessage.publicKey }]
+  },
+
+  async getAccounts(_, next) {
+    const signed = JSON.parse(localStorage.getItem("plugin:signedMessage") || "null")
+    if (!signed) return next()
+    return [{ accountId: signed.accountId, publicKey: signed.publicKey }]
+  },
+
+  async getSignature() {
+    const signed = JSON.parse(localStorage.getItem("plugin:signedMessage") || "null")
+    return signed
+  }
+}
 
 export const ExampleNEAR: FC = () => {
   const [network, setNetwork] = useState<"testnet" | "mainnet">("mainnet");
@@ -38,6 +65,8 @@ export const ExampleNEAR: FC = () => {
       network,
       logger,
     });
+
+    connector.use(loginWithSignature);
 
     connector.on("wallet:signIn", async (t) => {
       setWallet(await connector.wallet());
